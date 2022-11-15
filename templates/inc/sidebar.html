@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="sidebar">
+    <div class="popular-tags">
+        <h2 class="mt-5">Popular Tags</h2>
+        <div class="container">
+            {% for tag in popular_tags %}
+            <a class="tag" href="{% url 'tag' tag=tag %}">{{ tag }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="best-members">
+        <h2>Best Members</h2>
+        <ul>
+            {% for member in best_members %}
+            <li class="mb-1">
+                <a href="">{{ member.user.first_name }} {{ member.user.last_name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>

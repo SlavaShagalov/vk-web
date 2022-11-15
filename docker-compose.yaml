@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:14.5-alpine
+    container_name: askme_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=askme
+      - POSTGRES_USER=test_user
+      - POSTGRES_PASSWORD=1234

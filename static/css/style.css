@@ -1,0 +1,161 @@
+.content {
+    padding: 60px 15px 0;
+}
+
+.btn-search {
+    color: white;
+    border-color: white;
+    background-color: transparent;
+}
+
+.btn-search:hover {
+    background-color: lime;
+}
+
+.btn-ask {
+    width: 140px;
+    margin-right: 20px;
+    color: white;
+    background-color: limegreen;
+}
+
+.btn-ask:hover {
+    color: white;
+    background-color: black;
+}
+
+/*auth*/
+div.auth {
+    display: flex;
+}
+
+.auth a {
+    color: white;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.auth a:hover {
+    color: black;
+}
+
+.auth-avatar img {
+    width: 50px;
+    height: 50px;
+    margin-right: 20px;
+}
+
+/*question*/
+.question {
+    margin-bottom: 20px;
+    border: 2px solid gray;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.question-avatar {
+    width: 100px;
+    height: 100px;
+    border: 2px solid green;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.question-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.question-answer {
+    margin-right: 20px;
+}
+
+.question-tags p {
+    display: inline;
+}
+
+div.question-tags {
+    display: inline;
+}
+
+.question-rating {
+    margin-top: 20px;
+    display: block;
+    text-align: center;
+}
+
+.question-rating p {
+    font-size: 20px;
+    margin: 0;
+}
+
+.answer {
+    margin-bottom: 20px;
+    border: 2px solid gray;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+.questions-header {
+    margin-bottom: 20px;
+}
+
+.questions-header a {
+    font-size: 20px;
+    margin-left: 20px;
+}
+
+/*sidebar*/
+.sidebar {
+    margin-left: 20px;
+}
+
+.popular-tags a {
+    margin-right: 15px;
+}
+
+.best-members {
+    margin-top: 20px;
+}
+
+.pagination > li > a {
+    background-color: white;
+    color: green;
+}
+
+.pagination > li > a:focus,
+.pagination > li > a:hover,
+.pagination > li > span:focus,
+.pagination > li > span:hover {
+    color: green;
+    background-color: #eee;
+    border-color: #ddd;
+}
+
+.pagination > .active > a {
+    color: white;
+    background-color: green;
+    border: solid 1px green;
+}
+
+.pagination > .active > a:hover {
+    background-color: green;
+    border: solid 1px green;
+}
+
+.settings-avatar {
+    width: 200px;
+    height: 200px;
+}
+
+.settings-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-size: contain;
+}
+
+/*.settings-avatar img:after {*/
+/*    display: block;*/
+/*}*/

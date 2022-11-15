@@ -1,0 +1,27 @@
+{% extends 'inc/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<!--variables-->
+{% url 'home' as home %}
+{% url 'hot' as hot %}
+
+<div class="questions-header">
+    <h1 class="d-inline">{{ title }}</h1>
+
+    {%if request.path == home %}
+    <a href="{% url 'hot' %}">Hot Questions</a>
+    {% elif request.path == hot %}
+    <a href="{% url 'home' %}">New Questions</a>
+    {% endif %}
+</div>
+
+{% for question in page_obj %}
+{% include "inc/question_item.html" %}
+{% endfor %}
+
+{% include 'inc/paginator.html' %}
+
+{% endblock %}

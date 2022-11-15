@@ -1,0 +1,73 @@
+{% extends 'inc/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<h1>Registration</h1>
+
+<form>
+    <div class="form-group row mb-3">
+        <label for="input-login" class="col-2 col-form-label">Login:</label>
+        <div class="col-4">
+            <input type="text" maxlength="32" class="form-control" id="input-login"
+                   placeholder="Login...">
+        </div>
+    </div>
+
+    <div class="form-group row mb-3">
+        <div class="alert alert-danger" role="alert">
+            Sorry, this email address already registered!
+        </div>
+        <label for="input-email" class="col-2 col-form-label">Email:</label>
+        <div class="col-6">
+            <input type="email" maxlength="256" class="form-control" id="input-email" placeholder="Email...">
+        </div>
+    </div>
+
+    <div class="form-group row mb-3">
+        <label for="input-first-name" class="col-2 col-form-label">First Name:</label>
+        <div class="col-6">
+            <input type="text" maxlength="32" class="form-control" id="input-first-name" placeholder="First Name...">
+        </div>
+    </div>
+
+    <div class="form-group row mb-3">
+        <label for="input-last-name" class="col-2 col-form-label">Last Name:</label>
+        <div class="col-6">
+            <input type="text" maxlength="32" class="form-control" id="input-last-name" placeholder="Last Name...">
+        </div>
+    </div>
+
+    <div class="form-group row mb-3">
+        <label for="input-password" class="col-2 col-form-label">Password:</label>
+        <div class="col-4">
+            <input type="password" maxlength="32" class="form-control" id="input-password" placeholder="Password...">
+        </div>
+    </div>
+
+    <div class="form-group row align-items-center mb-3">
+        <div class="alert alert-danger" role="alert">
+            Password doesn't match!
+        </div>
+        <label for="input-password-repeat" class="col-2 col-form-label">Repeat Password:</label>
+        <div class="col-4">
+            <input type="password" maxlength="32" class="form-control" id="input-password-repeat"
+                   placeholder="Repeat Password...">
+        </div>
+    </div>
+
+    <div class="form-group row mb-3">
+        <label for="input-avatar" class="col-2 col-form-label">Upload avatar:</label>
+        <div class="col">
+            <div class="settings-avatar mb-3">
+                <img src="{{ user.profile.avatar.url }}" alt="Avatar photo">
+            </div>
+            <input class="form-control mb-3" id="input-avatar" type="file"/>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-ask offset-2 mb-3">Register</button>
+</form>
+
+{% endblock %}
