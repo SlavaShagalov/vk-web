@@ -10,6 +10,12 @@
 
 - Скачать данные по этой [ссылке](https://disk.yandex.ru/d/OLfS_LngrPZWZg). Поместить файл askme_dump.sql в корневую
   директорию проекта.
+  
+- python3 -m venv venv
+
+- source venv/bin/activate
+
+- pip install -r requirements.txt
 
 - python manage.py init_project (Данная команда скачает и установит docker-образ c СУБД Postgres,
   запустит контейнер, выполнит копирование данных из файла askme_dump.sql в БД и остановит контейнер)
