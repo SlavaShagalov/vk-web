@@ -2,22 +2,26 @@
 
 ## ДЗ 1-3
 
-### Студент: Шагалов Вячеслав WEB-11
+### Студент: Шагалов Вячеслав WEB-11 (tg: [@slava_shagalov](https://t.me/slava_shagalov))
 
 ### Преподаватель: Динар Сабитов
 
-### После клонирования репозитория необходимо выполнить следующие команды из корневой директории для инициализации проекта
+### После клонирования репозитория необходимо сделать следующие действия для инициализации проекта:
 
-source venv/bin/activate
+- Скачать данные по этой [ссылке](https://disk.yandex.ru/d/OLfS_LngrPZWZg). Поместить файл askme_dump.sql в корневую
+  директорию проекта.
 
-python manage.py init_project
+- python manage.py init_project (Данная команда скачает и установит docker-образ c СУБД Postgres,
+  запустит контейнер, выполнит копирование данных из файла askme_dump.sql в БД и остановит контейнер)
 
-### Что делает init_project
+### Админ уже добавлен в askme_dump.sql. Данные для входа в в админку:
 
-- Выполняет необходимые миграции
-- Скачивает докер-образ с Postrges БД, поднимает ее
-- Загружает данные из файла с дампом в базу данных
-- Создает пользователя admin с паролем 1234
+- username: admin
+- password: 1234
+
+### Пара скриншотов
+
+
 
 ## Полезные команды
 
@@ -51,7 +55,7 @@ python manage.py createsuperuser
 
 pip freeze > requirements.txt
 
-### Загрузка/выгрузка данных БД
+### Загрузка/выгрузка данных БД с помощью Django (медленно)
 
 python manage.py dumpdata > db.json
 
@@ -61,7 +65,7 @@ python manage.py loaddata db.json
 
 python manage.py loaddata --app app db.json
 
-### Postrges load from dump file
+### Загрузка данных БД с помощью Postgres (быстро)
 
 docker exec -i askme_db psql --set ON_ERROR_STOP=on --username test_user askme < askme_dump.sql
 
