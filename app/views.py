@@ -37,17 +37,14 @@ def questions_by_tag(request, tag: str):
         'popular_tags': Tag.objects.top_tags(10),
         'is_auth': cur_user['is_auth'],
     }
-    try:
-        questions = Question.objects.by_tag(tag)
-        if questions.count() == 0:
-            raise ObjectDoesNotExist
-        page_obj = paginate(questions, request, 5)
-        context.update({
-            'title': f'Tag: {tag}',
-            "page_obj": page_obj,
-        })
-    except ObjectDoesNotExist:
+    questions = Question.objects.by_tag(tag)
+    if questions.count() == 0:
         return render(request, "not_found.html", context, status=404)
+    page_obj = paginate(questions, request, 5)
+    context.update({
+        'title': f'Tag: {tag}',
+        "page_obj": page_obj,
+    })
     return render(request, 'index.html', context=context)
 
 
