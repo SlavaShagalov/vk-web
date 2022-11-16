@@ -1,4 +1,5 @@
 import os
+import time
 
 from django.core.management.base import BaseCommand
 
@@ -12,8 +13,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         os.system('docker-compose up -d --build')
-        print('Load DB data...')
-        os.system('docker exec -i askme_db psql --set ON_ERROR_STOP=on --username test_user askme < askme_dump.sql')
-        print('Success.')
-
-        os.system('docker-compose stop')
+        time.sleep(5)
+        os.system('docker exec -i askme_db psql --set ON_ERROR_STOP=on --username test_user askme < askme_dump.sql; '
+                  'docker-compose stop')
