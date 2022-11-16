@@ -24,7 +24,11 @@
 
 ### Пара скриншотов
 
+![image](https://user-images.githubusercontent.com/73226654/202084576-59e2c670-b161-4e5a-89a7-e90be05f45d6.png)
 
+![image](https://user-images.githubusercontent.com/73226654/202084769-0e6e4871-a541-4c41-bedd-944112729553.png)
+
+![image](https://user-images.githubusercontent.com/73226654/202084899-8606b272-118a-43d9-979c-7728598c6137.png)
 
 ## Полезные команды
 
