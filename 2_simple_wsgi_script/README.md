@@ -5,11 +5,11 @@
 - выполняеться при запросе **localhost:8081**;
 - работать без использования Django.
 
-Из директории simple_wsgi_script запустить команду:
+### Из директории simple_wsgi_script запустить команду:
 
 gunicorn -c gunicorn.conf.py output_params_wsgi:application
 
-Тест GET запроса в браузере:
+### Тест GET запроса в браузере:
 
 ![img.png](img/test_get.png)
 
