@@ -5,7 +5,7 @@
 - выполняеться при запросе **localhost:8081**;
 - работать без использования Django.
 
-### Из директории simple_wsgi_script запустить команду:
+### Из директории 2_simple_wsgi_script запустить команду:
 
 gunicorn -c gunicorn.conf.py output_params_wsgi:application
 
