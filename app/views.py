@@ -1,41 +1,50 @@
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from app.models import Question, Tag, Profile, Answer
-from django.db import models
+from django.urls import reverse
+
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods, require_POST, require_GET
+
+from django.forms import model_to_dict
+from app.forms import LoginForm, RegistrationForm, SettingsForm, QuestionForm, AnswerForm
+from app.models import Question, Tag, Profile, Answer, Vote
+
+from django.contrib import auth
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.cache import cache
 
 from utils import paginate
 
-cur_user = {'is_auth': True}
 
-
+@require_GET
 def index(request):
+    # print('home')
     context = {
         'title': 'New Questions',
         'page_obj': paginate(Question.objects.new(), request, 5),
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': cur_user['is_auth'],
     }
     return render(request, 'index.html', context=context)
 
 
+@require_GET
 def hot_questions(request):
     context = {
         'title': 'Hot Questions',
         'page_obj': paginate(Question.objects.hot(), request, 5),
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': cur_user['is_auth'],
     }
     return render(request, 'index.html', context=context)
 
 
+@require_GET
 def questions_by_tag(request, tag: str):
     context = {
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': cur_user['is_auth'],
     }
     questions = Question.objects.by_tag(tag)
     if questions.count() == 0:
@@ -48,60 +57,216 @@ def questions_by_tag(request, tag: str):
     return render(request, 'index.html', context=context)
 
 
+@require_http_methods(['GET', 'POST'])
 def question(request, q_id: int):
     context = {
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': cur_user['is_auth'],
     }
+
     try:
-        q = Question.objects.by_id(q_id)
+        quest = Question.objects.by_id(q_id)
         page_obj = paginate(Answer.objects.by_question(q_id), request, 5)
         context.update({
-            "question": q,
-            "page_obj": page_obj,
+            "question": quest,
         })
     except ObjectDoesNotExist:
         return render(request, "not_found.html", context, status=404)
+
+    if request.method == 'GET':
+        form = AnswerForm()
+    elif request.method == 'POST':
+        if not request.user.is_authenticated:
+            return redirect(f'/login?continue={request.path}')
+        else:
+            form = AnswerForm(data=request.POST)
+            if form.is_valid():
+                answer = form.save(commit=False)
+                profile = Profile.objects.get(user=request.user)
+
+                answer.profile = profile
+                answer.question = quest
+                answer.save()
+
+                page_obj = paginate(Answer.objects.by_question(q_id), request, 5)
+                return redirect(f"{request.path}?page={page_obj.paginator.num_pages}#{answer.id}")
+    context.update({
+        "page_obj": page_obj,
+        "form": form,
+    })
     return render(request, 'question.html', context=context)
 
 
+@require_http_methods(['GET', 'POST'])
+@login_required(login_url='login', redirect_field_name='continue')
 def ask(request):
+    if request.method == "GET":
+        form = QuestionForm()
+    elif request.method == "POST":
+        form = QuestionForm(data=request.POST)
+        if form.is_valid():
+            profile = Profile.objects.get(user=request.user)
+            question = form.save(profile)
+            return redirect('question', q_id=question.id)
+    else:
+        form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': cur_user['is_auth'],
+        'form': form,
     }
     return render(request, 'ask.html', context=context)
 
 
+@require_http_methods(['GET', 'POST'])
 def login(request):
+    next_url = request.GET.get('continue')
+    next_url = next_url if next_url else 'home'
+    if request.user.is_authenticated:
+        return redirect(next_url)
+
+    if request.method == 'GET':
+        form = LoginForm()
+        cache.set('continue', next_url)
+    elif request.method == 'POST':
+        form = LoginForm(data=request.POST)
+        if form.is_valid():
+            user = auth.authenticate(request=request, **form.cleaned_data)
+            if user:
+                auth.login(request, user)
+
+                next_url = cache.get('continue')
+                cache.delete('continue')
+                next_url = next_url if next_url else 'home'
+                return redirect(next_url)
+            else:
+                form.add_error(None, "Invalid password or login!")
+                form.add_error('username', "")
+                form.add_error('password', "")
+    else:
+        form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': False,
+        'form': form
     }
     return render(request, 'login.html', context=context)
 
 
+@require_http_methods(['GET', 'POST'])
 def signup(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'GET':
+        form = RegistrationForm()
+    elif request.method == 'POST':
+        form = RegistrationForm(data=request.POST)
+        if form.is_valid():
+            profile = form.save()
+            auth.login(request, profile.user)
+            return redirect('home')
+    else:
+        form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': False,
+        'form': form,
     }
     return render(request, 'signup.html', context=context)
 
 
+@login_required(login_url='login', redirect_field_name='continue')
+@require_http_methods(['GET', 'POST'])
 def settings(request):
+    if request.method == "GET":
+        initial_data = model_to_dict(request.user)
+        initial_data['avatar'] = request.user.profile.avatar
+        form = SettingsForm(initial=initial_data)
+    elif request.method == "POST":
+        form = SettingsForm(data=request.POST, instance=request.user, files=request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('settings'))
+    else:
+        form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
-        'is_auth': True,
+        'form': form,
     }
     return render(request, 'settings.html', context=context)
 
 
+@login_required(login_url='login', redirect_field_name='continue')
 def logout(request):
-    cur_user['is_auth'] = False
-    return redirect(index)
+    auth.logout(request)
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+@require_POST
+def vote(request):
+    print(f'called views.vote()')
+    print(request.POST)
+
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "status": "error",
+        })
+
+    object_id = request.POST['object_id']
+    object_type = request.POST['object_type']
+    vote_value = request.POST['vote_value']
+    profile_id = request.user.profile.id
+
+    print(f'called views.vote({vote_value}, {profile_id}, {object_id}, {object_type})')
+
+    try:
+        print(type(vote_value))
+        rating = Vote.objects.add_vote(vote_value=int(vote_value), profile_id=profile_id, object_id=object_id,
+                                       object_type=int(object_type))
+        return JsonResponse({
+            "status": "ok",
+            "rating": rating,
+        })
+    except:
+        return JsonResponse({
+            "status": "error",
+        })
+
+
+@require_POST
+def correct(request):
+    print(f'called views.correct()')
+    print(request.POST)
+
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "status": "error",
+        })
+
+    question_id = request.POST['question_id']
+    answer_id = request.POST['answer_id']
+    profile_id = request.user.profile.id
+
+    print(f'called views.correct({question_id}, {answer_id})')
+
+    new_correct = Answer.objects.get(profile_id=profile_id, id=answer_id, question_id=question_id)
+    new_state = not new_correct.correct
+
+    try:
+        old_correct = Answer.objects.get(profile_id=profile_id, question_id=question_id, correct=True)
+        print('Old correct: ', old_correct)
+        print('Old correct: ', old_correct.id, old_correct.question_id, old_correct.profile_id)
+        old_correct.correct = False
+        old_correct.save()
+    except Answer.DoesNotExist:
+        print('Not found old correct answer')
+
+    new_correct.correct = new_state
+    new_correct.save()
+
+    return JsonResponse({
+        "status": "ok",
+        "new_state": new_state,
+    })

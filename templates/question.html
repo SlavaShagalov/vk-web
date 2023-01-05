@@ -1,81 +1,96 @@
 {% extends 'inc/base.html' %}
 
+{% load bootstrap5 %}
 {% load static %}
 
 {% block content %}
 
-<div class="row mb-5">
-    <div class="col-2">
-        <div class="question-avatar">
-            <img src="{{ question.profile.avatar }}" alt="Avatar photo">
-        </div>
-        <div class="question-rating">
-            <div class="question-rating-btn">
-                <button class="spinbox-up btn" type="button">
-                    <img src="{% static '/img/caret-up-fill.svg' %}" alt="Up">
-                </button>
-            </div>
-            <p>{{ question.rating }}</p>
-            <div class="question-rating-btn">
-                <button class="spinbox-down btn" type="button">
-                    <img src="{% static '/img/caret-down-fill.svg' %}" alt="Down">
-                </button>
-            </div>
-        </div>
-    </div>
-    <div class="col-10">
-        <h2 class="question-title">{{ question.title }}</h2>
-        <p class="question-text">{{ question.text }}</p>
-        <div class="question-tags">
-            Tags:
-            {% for tag in question.tags.all %}
-            <a href="{% url 'tag' tag=tag %}">{{ tag }}</a>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    {% for answer in page_obj %}
-
-    <div class="row answer">
+    <div class="row mb-5">
         <div class="col-2">
-            <div class="question-avatar hor-center">
-                <img src="{{ answer.profile.avatar }}" alt="Avatar photo">
+            <div class="question-avatar">
+                <img src="{{ question.profile.avatar.url }}" alt="Avatar photo">
             </div>
             <div class="question-rating">
                 <div class="question-rating-btn">
-                    <button class="spinbox-up btn" type="button">
+                    <button class="question-vote-up btn" data-id="{{ question.id }}" type="button">
                         <img src="{% static '/img/caret-up-fill.svg' %}" alt="Up">
                     </button>
                 </div>
-                <p>{{ answer.rating }}</p>
+                <p id="question-rating-{{ question.id }}">{{ question.rating }}</p>
                 <div class="question-rating-btn">
-                    <button class="spinbox-down btn" type="button">
+                    <button class="question-vote-down btn" data-id="{{ question.id }}" type="button">
                         <img src="{% static '/img/caret-down-fill.svg' %}" alt="Down">
                     </button>
                 </div>
             </div>
         </div>
         <div class="col-10">
-            <p> {{ answer.text }} </p>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-                <label class="form-check-label" for="flexCheckChecked">
-                    Correct
-                </label>
+            <h2 class="question-title">{{ question.title }}</h2>
+            <p class="question-text">{{ question.text }}</p>
+            <div class="question-tags">
+                Tags:
+                {% for tag in question.tags.all %}
+                    <a href="{% url 'tag' tag=tag %}">{{ tag }}</a>
+                {% endfor %}
             </div>
         </div>
     </div>
 
-    {% endfor %}
+    <div class="row">
+        {% for answer in page_obj %}
 
-    {% include "inc/paginator.html" %}
-</div>
+            <div id="{{ answer.id }}" class="row answer">
+                <div class="col-2">
+                    <div class="question-avatar hor-center">
+                        <img src="{{ answer.profile.avatar.url }}" alt="Avatar photo">
+                    </div>
+                    <div class="question-rating">
+                        <div class="question-rating-btn">
+                            <button class="answer-vote-up btn" data-id="{{ answer.id }}" type="button">
+                                <img src="{% static '/img/caret-up-fill.svg' %}" alt="Up">
+                            </button>
+                        </div>
+                        <p id="answer-rating-{{ answer.id }}">{{ answer.rating }}</p>
+                        <div class="question-rating-btn">
+                            <button class="answer-vote-down btn" data-id="{{ answer.id }}" type="button">
+                                <img src="{% static '/img/caret-down-fill.svg' %}" alt="Down">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-10">
+                    <p> {{ answer.text }} </p>
+                    <div class="form-check">
+                        {% if request.user.profile == question.profile %}
+                            <label for="answer-correct-{{ answer.id }}">
+                                Correct
+                                <input id="answer-correct-{{ answer.id }}" class="form-check-input" type="checkbox"
+                                       data-qid="{{ question.id }}" data-aid="{{ answer.id }}"
+                                        {% if answer.correct %} checked="checked" {% endif %}>
+                            </label>
+                        {% else %}
+                            {% if answer.correct %}
+                                <label class="form-check-label">
+                                    Correct
+                                    <input class="form-check-input" type="checkbox" disabled checked>
+                                </label>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-<div class="row mb-5">
-    <textarea placeholder="Enter your answer here..." class="form-control mb-3" rows="3"></textarea>
-    <button type="submit" class="btn btn-ask col-2">Answer</button>
-</div>
+        {% endfor %}
 
-{% endblock %}
+        {% include "inc/paginator.html" %}
+    </div>
+
+    <div class="row mb-5">
+        <form action="/question/{{ question.id }}/" method="post" class="form" novalidate>
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-ask col-2">Answer</button>
+        </form>
+    </div>
+
+{% endblock content %}

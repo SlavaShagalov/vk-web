@@ -78,10 +78,18 @@ python manage.py loaddata db.json
 
 python manage.py loaddata --app app db.json
 
-### Загрузка данных БД с помощью Postgres (быстро)
+### Загрузка/выгрузка данных БД с помощью Postgres (быстро)
 
 docker exec -i askme_db psql --set ON_ERROR_STOP=on --username test_user askme < askme_dump.sql
+
+docker exec -i container_name pg_dump --username pg_username         [--password pg_password] db_name > /path/on/your/machine/dump.sql
 
 ### Генерация данных для БД
 
 python manage.py fill_db [ratio]
+
+
+### Запуск gunicorn сервера (из корневой директории проекта)
+
+gunicorn -c gunicorn.conf.py askme.wsgi:application
+

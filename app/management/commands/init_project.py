@@ -14,5 +14,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         os.system('docker-compose up -d --build')
         time.sleep(5)
-        os.system('docker exec -i askme_db psql --set ON_ERROR_STOP=on --username test_user askme < askme_dump.sql; '
+        os.system('docker exec -i askme_db psql --set ON_ERROR_STOP=on --username test_user askme < askme_dump_10.sql; '
                   'docker-compose stop')

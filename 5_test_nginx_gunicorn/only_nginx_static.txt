@@ -1,0 +1,35 @@
+Server Software:        nginx/1.23.3
+Server Hostname:        127.0.0.1
+Server Port:            80
+
+Document Path:          /static/img/logo.jpg
+Document Length:        13101 bytes
+
+Concurrency Level:      100
+Time taken for tests:   0.614 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      134120000 bytes
+HTML transferred:       131010000 bytes
+Requests per second:    16279.35 [#/sec] (mean)
+Time per request:       6.143 [ms] (mean)
+Time per request:       0.061 [ms] (mean, across all concurrent requests)
+Transfer rate:          213221.38 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    2   0.3      2       5
+Processing:     1    4   0.5      4       8
+Waiting:        0    2   0.5      2       4
+Total:          3    6   0.5      6      10
+
+Percentage of the requests served within a certain time (ms)
+  50%      6
+  66%      6
+  75%      6
+  80%      6
+  90%      7
+  95%      7
+  98%      7
+  99%      8
+ 100%     10 (longest request)
