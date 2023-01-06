@@ -161,7 +161,7 @@ def signup(request):
     if request.method == 'GET':
         form = RegistrationForm()
     elif request.method == 'POST':
-        form = RegistrationForm(data=request.POST)
+        form = RegistrationForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             profile = form.save()
             auth.login(request, profile.user)
@@ -206,9 +206,6 @@ def logout(request):
 
 @require_POST
 def vote(request):
-    print(f'called views.vote()')
-    print(request.POST)
-
     if not request.user.is_authenticated:
         return JsonResponse({
             "status": "error",
@@ -219,10 +216,7 @@ def vote(request):
     vote_value = request.POST['vote_value']
     profile_id = request.user.profile.id
 
-    print(f'called views.vote({vote_value}, {profile_id}, {object_id}, {object_type})')
-
     try:
-        print(type(vote_value))
         rating = Vote.objects.add_vote(vote_value=int(vote_value), profile_id=profile_id, object_id=object_id,
                                        object_type=int(object_type))
         return JsonResponse({
@@ -237,9 +231,6 @@ def vote(request):
 
 @require_POST
 def correct(request):
-    print(f'called views.correct()')
-    print(request.POST)
-
     if not request.user.is_authenticated:
         return JsonResponse({
             "status": "error",
@@ -247,17 +238,12 @@ def correct(request):
 
     question_id = request.POST['question_id']
     answer_id = request.POST['answer_id']
-    profile_id = request.user.profile.id
 
-    print(f'called views.correct({question_id}, {answer_id})')
-
-    new_correct = Answer.objects.get(profile_id=profile_id, id=answer_id, question_id=question_id)
+    new_correct = Answer.objects.get(id=answer_id, question_id=question_id)
     new_state = not new_correct.correct
 
     try:
-        old_correct = Answer.objects.get(profile_id=profile_id, question_id=question_id, correct=True)
-        print('Old correct: ', old_correct)
-        print('Old correct: ', old_correct.id, old_correct.question_id, old_correct.profile_id)
+        old_correct = Answer.objects.get(question_id=question_id, correct=True)
         old_correct.correct = False
         old_correct.save()
     except Answer.DoesNotExist:

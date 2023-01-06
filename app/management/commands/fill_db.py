@@ -43,7 +43,7 @@ class Command(BaseCommand):
             user.set_password(raw_password=self.faker.password())
 
             users[i] = user
-            profiles[i] = Profile(user=user, avatar=f'/avatar/2023/1/4/avatar-{random.randint(1, 9)}.jpg')
+            profiles[i] = Profile(user=user, avatar=f'/gen_avatars/avatar-{random.randint(1, 9)}.jpg')
         User.objects.bulk_create(users)
         Profile.objects.bulk_create(profiles)
         print('Success.')

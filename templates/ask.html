@@ -9,8 +9,8 @@
 
     <form action="/ask/" method="post" class="form" novalidate>
         {% csrf_token %}
-        {% bootstrap_form form %}
-        <button type="submit" class="btn btn-ask offset-sm-1">Ask</button>
+        {% bootstrap_form form layout='horizontal' label_class='col-1' %}
+        <button type="submit" class="btn btn-ask offset-1">Ask</button>
     </form>
 
 {% endblock content %}

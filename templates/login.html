@@ -9,8 +9,8 @@
 
     <form action="/login/" method="post" class="form" novalidate>
         {% csrf_token %}
-        {% bootstrap_form form %}
-        <button type="submit" class="btn btn-ask">Login</button>
+        {% bootstrap_form form layout='horizontal' label_class='col-2' field_class='col-6' %}
+        <button type="submit" class="btn btn-ask offset-2">Login</button>
     </form>
 
 {% endblock content %}

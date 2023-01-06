@@ -9,49 +9,77 @@ from app.models import Profile, Question, Tag, Answer
 
 
 class LoginForm(forms.Form):
-    username = CharField(widget=forms.TextInput())
-    password = CharField(widget=forms.PasswordInput(render_value=True), min_length=3)
+    username = CharField(widget=forms.TextInput(), label='Username:')
+    password = CharField(widget=forms.PasswordInput(render_value=True), min_length=3, label='Password:')
 
 
 class RegistrationForm(forms.ModelForm):
-    email = forms.EmailField(widget=forms.EmailInput(), label='Email', required=True)
-    password = forms.CharField(widget=forms.PasswordInput(render_value=True), min_length=3)
-    password_check = forms.CharField(widget=forms.PasswordInput(render_value=True))
+    email = forms.EmailField(widget=forms.EmailInput(), label='Email:', required=True)
+    password = forms.CharField(widget=forms.PasswordInput(render_value=True), min_length=3, label='Password:')
+    password_check = forms.CharField(widget=forms.PasswordInput(render_value=True), label='Password check:')
+    avatar = forms.ImageField(label='Avatar:', required=False, widget=forms.FileInput())
 
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name']
 
+        labels = {
+            'username': 'Login:',
+            'first_name': 'First Name:',
+            'last_name': 'Last Name:'
+        }
+
     def clean(self):
-        for field in ['username', 'first_name', 'last_name', 'email', 'password', 'password_check']:
-            if field not in self.cleaned_data.keys():
-                return self.cleaned_data
+        if 'password' not in self.cleaned_data.keys() or 'password_check' not in self.cleaned_data.keys():
+            return self.cleaned_data
 
         if self.cleaned_data['password'] != self.cleaned_data['password_check']:
             self.add_error('password_check', 'Password do not match')
 
-        if User.objects.filter(email=self.cleaned_data['email']).exists():
-            self.add_error('email', 'A user with such email already exists')
-
-        if User.objects.filter(username=self.cleaned_data['username']).exists():
-            self.add_error('username', 'A user with such username already exists')
-
         return self.cleaned_data
 
+    def clean_username(self):
+        data = self.cleaned_data['username']
+        if User.objects.filter(username=data).exists():
+            self.add_error('username', 'A user with such username already exists')
+        return data
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if User.objects.filter(email=data).exists():
+            self.add_error('email', 'A user with such email already exists')
+        return data
+
     def save(self, **kwargs):
+        avatar = None
+        # print(self.cleaned_data['avatar'])
+        if 'avatar' in self.cleaned_data.keys():
+            avatar = self.cleaned_data['avatar']
+
         self.cleaned_data.pop('password_check')
+        self.cleaned_data.pop('avatar')
         user = User.objects.create_user(**self.cleaned_data)
+
         profile = Profile.objects.create(user=user)
+        if avatar:
+            profile.avatar = avatar
         profile.save()
         return profile
 
 
 class SettingsForm(forms.ModelForm):
-    avatar = forms.ImageField(label="Avatar image", required=False, widget=forms.FileInput())
+    avatar = forms.ImageField(label='Avatar:', required=False, widget=forms.FileInput())
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        fields = ['username', 'email', 'first_name', 'last_name']
+
+        labels = {
+            'username': 'Login:',
+            'email': 'Email:',
+            'first_name': 'First Name:',
+            'last_name': 'Last Name:'
+        }
 
     def clean(self):
         cleaned_data = super().clean()
@@ -82,21 +110,22 @@ class SettingsForm(forms.ModelForm):
 
 
 class QuestionForm(forms.ModelForm):
-    tags = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "django postgres"}), label="Tags",
+    tags = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "django postgres"}), label='Tags:',
                            required=False)
 
     class Meta:
         model = Question
         fields = ['title', 'text']
+
+        labels = {
+            'title': 'Title:',
+            'text': 'Text:',
+        }
+
         widgets = {
             'title': forms.TextInput(attrs={"placeholder": "How to change element color?"}),
             'text': forms.Textarea(attrs={"placeholder": "I got an error..."}),
         }
-        # error_messages = {
-        #     NON_FIELD_ERRORS: {
-        #         'unique_together': "%(model_name)s's %(field_labels)s are not unique.",
-        #     }
-        # }
 
     def clean_tags(self):
         data = self.cleaned_data['tags']
@@ -123,6 +152,11 @@ class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
         fields = ['text']
+
+        labels = {
+            'text': '',
+        }
+
         widgets = {
             'text': forms.Textarea(attrs={"placeholder": "My solution is..."}),
         }
