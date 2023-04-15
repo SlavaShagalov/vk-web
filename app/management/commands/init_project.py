@@ -12,7 +12,7 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
-        os.system('docker-compose up -d --build')
+        os.system('docker compose up -d --build')
         time.sleep(5)
         os.system('docker exec -i askme_db psql --set ON_ERROR_STOP=on --username test_user askme < askme_dump.sql; '
-                  'docker-compose stop')
+                  'docker compose stop')

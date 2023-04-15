@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Q&A Platform</title>
+    <title>Вопросы и Ответы</title>
 
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
@@ -22,13 +22,13 @@
             <a class="navbar-brand" href="{% url 'home' %}">
                 <img src="{% static '/img/logo.jpg' %}" alt="Logo" width="50" height="50"
                      class="d-inline-block align-text-center">
-                Q&A Platform
+                Вопросы и Ответы
             </a>
             <form class="d-flex me-auto" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-search" type="submit">Search</button>
+                <button class="btn btn-search" type="submit">Поиск</button>
             </form>
-            <a class="btn btn-ask" href="{% url 'ask' %}" type="submit">Ask!</a>
+            <a class="btn btn-ask" href="{% url 'ask' %}" type="submit">Задать вопрос!</a>
             <div class="auth">
                 {% if user.is_authenticated %}
                     <div class="auth-avatar">
@@ -39,15 +39,15 @@
                             <a href="#">{{ user.first_name }} {{ user.last_name }}</a>
                         </div>
                         <div class="auth-options">
-                            <a class="col" href="{% url 'settings' %}">settings</a>
-                            <a class="col" href="{% url 'logout' %}">logout</a>
+                            <a class="col" href="{% url 'settings' %}">Настройки</a>
+                            <a class="col" href="{% url 'logout' %}">Выйти</a>
                         </div>
                     </div>
                 {% else %}
                     <div class="auth-links">
                         <div class="auth-options">
-                            <a class="col" href="{% url 'login' %}?continue={{ request.path }}">login</a>
-                            <a class="col" href="{% url 'signup' %}">register</a>
+                            <a class="col" href="{% url 'login' %}?continue={{ request.path }}">Войти</a>
+                            <a class="col" href="{% url 'signup' %}">Регистрация</a>
                         </div>
                     </div>
                 {% endif %}
@@ -73,7 +73,7 @@
 
 <footer class="footer mt-auto py-3 bg-light">
     <div class="container align-content-start justify-content-start">
-        <p>Q&A Platform web-site.</p>
+        <p>Веб-сайт Вопросы и Ответы. Все права защищены.</p>
     </div>
 </footer>
 

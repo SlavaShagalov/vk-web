@@ -12,9 +12,9 @@
     <h1 class="d-inline">{{ title }}</h1>
 
     {%if request.path == home %}
-    <a href="{% url 'hot' %}">Hot Questions</a>
+    <a href="{% url 'hot' %}">Популярные вопросы</a>
     {% elif request.path == hot %}
-    <a href="{% url 'home' %}">New Questions</a>
+    <a href="{% url 'home' %}">Новые вопросы</a>
     {% endif %}
 </div>
 

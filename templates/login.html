@@ -5,12 +5,12 @@
 
 {% block content %}
 
-    <h1>Log In</h1>
+    <h1>Авторизация</h1>
 
     <form action="/login/" method="post" class="form" novalidate>
         {% csrf_token %}
         {% bootstrap_form form layout='horizontal' label_class='col-2' field_class='col-6' %}
-        <button type="submit" class="btn btn-ask offset-2">Login</button>
+        <button type="submit" class="btn btn-ask offset-2">Войти</button>
     </form>
 
 {% endblock content %}

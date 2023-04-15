@@ -5,12 +5,12 @@
 
 {% block content %}
 
-    <h1>Registration</h1>
+    <h1>Регистрация</h1>
 
     <form action="/signup/" method="post" enctype="multipart/form-data" class="form" novalidate>
         {% csrf_token %}
         {% bootstrap_form form layout='horizontal' label_class='col-2' %}
-        <button type="submit" class="btn btn-ask offset-2 mb-3">Register</button>
+        <button type="submit" class="btn btn-ask offset-2 mb-3">Зарегистрироваться</button>
     </form>
 
 {% endblock content %}

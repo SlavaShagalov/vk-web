@@ -21,7 +21,7 @@ from utils import paginate
 def index(request):
     # print('home')
     context = {
-        'title': 'New Questions',
+        'title': 'Новые вопросы',
         'page_obj': paginate(Question.objects.new(), request, 5),
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
@@ -32,7 +32,7 @@ def index(request):
 @require_GET
 def hot_questions(request):
     context = {
-        'title': 'Hot Questions',
+        'title': 'Популярные вопросы',
         'page_obj': paginate(Question.objects.hot(), request, 5),
         'best_members': Profile.objects.top_users(10),
         'popular_tags': Tag.objects.top_tags(10),
@@ -140,7 +140,7 @@ def login(request):
                 next_url = next_url if next_url else 'home'
                 return redirect(next_url)
             else:
-                form.add_error(None, "Invalid password or login!")
+                form.add_error(None, "Неправильный логин или пароль.")
                 form.add_error('username', "")
                 form.add_error('password', "")
     else:

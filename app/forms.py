@@ -9,15 +9,15 @@ from app.models import Profile, Question, Tag, Answer
 
 
 class LoginForm(forms.Form):
-    username = CharField(widget=forms.TextInput(), label='Username:')
-    password = CharField(widget=forms.PasswordInput(render_value=True), min_length=3, label='Password:')
+    username = CharField(widget=forms.TextInput(), label='Логин:')
+    password = CharField(widget=forms.PasswordInput(render_value=True), min_length=3, label='Пароль:')
 
 
 class RegistrationForm(forms.ModelForm):
     email = forms.EmailField(widget=forms.EmailInput(), label='Email:', required=True)
-    password = forms.CharField(widget=forms.PasswordInput(render_value=True), min_length=3, label='Password:')
-    password_check = forms.CharField(widget=forms.PasswordInput(render_value=True), label='Password check:')
-    avatar = forms.ImageField(label='Avatar:', required=False, widget=forms.FileInput())
+    password = forms.CharField(widget=forms.PasswordInput(render_value=True), min_length=3, label='Пароль:')
+    password_check = forms.CharField(widget=forms.PasswordInput(render_value=True), label='Повтор пароля:')
+    avatar = forms.ImageField(label='Фото профиля:', required=False, widget=forms.FileInput())
 
     class Meta:
         model = User
