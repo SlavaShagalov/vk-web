@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods, require_POST, req
 
 from django.forms import model_to_dict
 from app.forms import LoginForm, RegistrationForm, SettingsForm, QuestionForm, AnswerForm
-from app.models import Question, Tag, Profile, Answer, Vote
+from app.models import Question, Label, Profile, Answer, Vote
 
 from django.contrib import auth
 
@@ -24,7 +24,7 @@ def index(request):
         'title': 'Новые вопросы',
         'page_obj': paginate(Question.objects.new(), request, 5),
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_tags': Label.objects.top_labels(10),
     }
     return render(request, 'index.html', context=context)
 
@@ -35,23 +35,23 @@ def hot_questions(request):
         'title': 'Популярные вопросы',
         'page_obj': paginate(Question.objects.hot(), request, 5),
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_tags': Label.objects.top_labels(10),
     }
     return render(request, 'index.html', context=context)
 
 
 @require_GET
-def questions_by_tag(request, tag: str):
+def questions_by_label(request, label: str):
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_tags': Label.objects.top_labels(10),
     }
-    questions = Question.objects.by_tag(tag)
+    questions = Question.objects.by_tag(label)
     if questions.count() == 0:
         return render(request, "not_found.html", context, status=404)
     page_obj = paginate(questions, request, 5)
     context.update({
-        'title': f'Tag: {tag}',
+        'title': f'Метка: {label}',
         "page_obj": page_obj,
     })
     return render(request, 'index.html', context=context)
@@ -61,7 +61,7 @@ def questions_by_tag(request, tag: str):
 def question(request, q_id: int):
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_tags': Label.objects.top_labels(10),
     }
 
     try:
@@ -112,7 +112,7 @@ def ask(request):
         form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_labels': Label.objects.top_labels(10),
         'form': form,
     }
     return render(request, 'ask.html', context=context)
@@ -147,7 +147,7 @@ def login(request):
         form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_tags': Label.objects.top_labels(10),
         'form': form
     }
     return render(request, 'login.html', context=context)
@@ -170,7 +170,7 @@ def signup(request):
         form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_tags': Label.objects.top_labels(10),
         'form': form,
     }
     return render(request, 'signup.html', context=context)
@@ -192,7 +192,7 @@ def settings(request):
         form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Tag.objects.top_tags(10),
+        'popular_tags': Label.objects.top_labels(10),
         'form': form,
     }
     return render(request, 'settings.html', context=context)

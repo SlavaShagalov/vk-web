@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from app.models import Question, Profile, Tag, Answer, Vote
+from app.models import Question, Profile, Label, Answer, Vote
 from django.contrib.auth.models import User
 
 from faker import Faker, exceptions
@@ -62,17 +62,17 @@ class Command(BaseCommand):
                     word[j] = random.choice(CHAR_LIST)
             used_words.append(word.copy())
 
-            tags[i] = Tag(name="".join(word))
+            tags[i] = Label(name="".join(word))
 
-        Tag.objects.bulk_create(tags)
+        Label.objects.bulk_create(tags)
         print("Success.")
 
     def questions_gen(self, count):
         print("Questions generating...")
         prof_min_id = Profile.objects.order_by('id')[0].id
         prof_max_id = Profile.objects.order_by('-id')[0].id
-        tag_min_id = Tag.objects.order_by('id')[0].id
-        tag_max_id = Tag.objects.order_by('-id')[0].id
+        tag_min_id = Label.objects.order_by('id')[0].id
+        tag_max_id = Label.objects.order_by('-id')[0].id
 
         questions = [None] * count
         for i in range(count):
@@ -91,8 +91,8 @@ class Command(BaseCommand):
             print(i)
             n_tags = random.randint(1, 5)
             for j in range(n_tags):
-                tags[j] = Tag.objects.get(id=random.randint(tag_min_id, tag_max_id))
-            questions[i].tags.add(*tags[:n_tags])
+                tags[j] = Label.objects.get(id=random.randint(tag_min_id, tag_max_id))
+            questions[i].labels.add(*tags[:n_tags])
             questions[i].save()
         print("Success.")
 

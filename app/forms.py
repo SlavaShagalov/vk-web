@@ -5,7 +5,7 @@ from django.core.validators import validate_email
 from django.forms import CharField
 
 from django.contrib.auth.models import User
-from app.models import Profile, Question, Tag, Answer
+from app.models import Profile, Question, Label, Answer
 
 
 class LoginForm(forms.Form):
@@ -68,7 +68,7 @@ class RegistrationForm(forms.ModelForm):
 
 
 class SettingsForm(forms.ModelForm):
-    avatar = forms.ImageField(label='Avatar:', required=False, widget=forms.FileInput())
+    avatar = forms.ImageField(label='Фото профиля:', required=False, widget=forms.FileInput())
 
     class Meta:
         model = User
@@ -128,21 +128,21 @@ class QuestionForm(forms.ModelForm):
         }
 
     def clean_tags(self):
-        data = self.cleaned_data['tags']
+        data = self.cleaned_data['labels']
         tag_list = data.split()
         for tag in tag_list:
             if len(tag) > 32:
-                self.add_error('tags', 'Max length of tag is 32 characters')
+                self.add_error('labels', 'Max length of tag is 32 characters')
         return data
 
     def save(self, profile):
         question = super().save(commit=False)
         question.profile = profile
         question.save()
-        data = self.cleaned_data['tags']
+        data = self.cleaned_data['labels']
         tag_list = data.split()
         for tag in tag_list:
-            question.tags.add(Tag.objects.get_or_create(name=tag)[0].id)
+            question.labels.add(Label.objects.get_or_create(name=tag)[0].id)
         question.save()
 
         return question

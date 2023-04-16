@@ -5,7 +5,7 @@
 
 {% block content %}
 
-    <h1>Settings: {{ user.first_name }} {{ user.last_name }}</h1>
+    <h1>Настройки: {{ user.first_name }} {{ user.last_name }}</h1>
 
     <form action="/profile/edit/" method="post" enctype="multipart/form-data" class="form" novalidate>
         {% csrf_token %}

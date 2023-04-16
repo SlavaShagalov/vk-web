@@ -8,7 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.index, name='home'),
     path('hot/', views.hot_questions, name='hot'),
-    path('tag/<str:tag>', views.questions_by_tag, name='tag'),
+    path('tag/<str:tag>', views.questions_by_label, name='tag'),
     path('question/<int:q_id>/', views.question, name='question'),
     path('login/', views.login, name='login'),
     path('signup/', views.signup, name='signup'),

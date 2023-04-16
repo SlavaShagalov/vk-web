@@ -1,8 +1,8 @@
 {% load static %}
 
 <div class="sidebar">
-    <div class="popular-tags">
-        <h2 class="mt-5">Популярные ключевые слова:</h2>
+    <div class="popular-labels">
+        <h2 class="mt-5">Популярные метки:</h2>
         <div class="container">
             {% for tag in popular_tags %}
             <a class="tag" href="{% url 'tag' tag=tag %}">{{ tag }}</a>

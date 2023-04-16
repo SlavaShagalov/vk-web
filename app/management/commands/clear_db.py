@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from app.models import Question, Profile, Vote, Tag, Answer
+from app.models import Question, Profile, Vote, Label, Answer
 from django.contrib.auth.models import User
 
 
@@ -16,4 +16,4 @@ class Command(BaseCommand):
         Vote.objects.all().delete()
         Profile.objects.all().delete()
         User.objects.all().delete()
-        Tag.objects.all().delete()
+        Label.objects.all().delete()

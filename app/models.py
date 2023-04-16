@@ -23,15 +23,15 @@ class Profile(models.Model):
         return self.user.username
 
 
-class TagManager(models.Manager):
-    def top_tags(self, count=10):
+class LabelManager(models.Manager):
+    def top_labels(self, count=10):
         return self.annotate(n_questions=Count('question')).order_by('-n_questions')[:count]
 
 
-class Tag(models.Model):
-    name = models.CharField(max_length=32, verbose_name='Tag name', unique=True)
+class Label(models.Model):
+    name = models.CharField(max_length=32, verbose_name='Label name', unique=True)
 
-    objects = TagManager()
+    objects = LabelManager()
 
     def __str__(self):
         return self.name
@@ -133,7 +133,7 @@ class Question(models.Model):
     rating = models.IntegerField(default=0)
 
     profile = models.ForeignKey(to=Profile, related_name='question', null=True, on_delete=models.SET_NULL)
-    tags = models.ManyToManyField(to=Tag, related_name='question', blank=True)
+    labels = models.ManyToManyField(to=Label, related_name='question', blank=True)
     votes = GenericRelation(to=Vote, related_query_name='question')
 
     objects = QuestionManager()
