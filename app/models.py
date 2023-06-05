@@ -37,17 +37,17 @@ class Label(models.Model):
         return self.name
 
 
-class VoteManager(models.Manager):
+class ScoreManager(models.Manager):
     use_for_related_fields = True
 
     def likes(self):
-        return self.get_queryset().filter(vote__gt=0)
+        return self.get_queryset().filter(score__gt=0)
 
     def dislikes(self):
-        return self.get_queryset().filter(vote__lt=0)
+        return self.get_queryset().filter(score__lt=0)
 
     def sum_rating(self):
-        return self.get_queryset().aggregate(Sum('vote')).get('vote__sum') or 0
+        return self.get_queryset().aggregate(Sum('score')).get('score__sum') or 0
 
     def questions(self):
         return self.get_queryset().filter(content_type__model='question').order_by('-questions__pub_date')
@@ -55,7 +55,7 @@ class VoteManager(models.Manager):
     def answers(self):
         return self.get_queryset().filter(content_type__model='answer').order_by('-answers__pub_date')
 
-    def add_vote(self, vote_value, profile_id, object_id, object_type):
+    def add_score(self, score_value, profile_id, object_id, object_type):
         obj = None
         if object_type == 0:
             obj = Question.objects.get(id=object_id)
@@ -65,42 +65,42 @@ class VoteManager(models.Manager):
             object_type = 'answer'
 
         try:
-            vote = self.get(profile_id=profile_id, content_type__model=object_type, object_id=object_id)
-        except Vote.DoesNotExist:
-            vote = None
+            score = self.get(profile_id=profile_id, content_type__model=object_type, object_id=object_id)
+        except Score.DoesNotExist:
+            score = None
 
         # если пользователь хочет сделать, например, дизлайк вместо лайка, нужно нажать два раза на дизлайк
         # - первый, чтоб отменить лайк, второй, чтобы поставить дизлайк
-        if not vote:
-            self.create(vote=vote_value, profile_id=profile_id, content_object=obj)
-        elif vote.vote == vote_value:
+        if not score:
+            self.create(score=score_value, profile_id=profile_id, content_object=obj)
+        elif score.score == score_value:
             raise Exception
         else:
-            vote.delete()
+            score.delete()
 
-        obj.rating += vote_value
+        obj.rating += score_value
         obj.save()
         return obj.rating
 
 
-class Vote(models.Model):
+class Score(models.Model):
     LIKE = 1
     DISLIKE = -1
 
-    VOTES = [
+    SCORES = [
         (LIKE, 'Like'),
         (DISLIKE, 'Dislike'),
     ]
 
-    vote = models.SmallIntegerField(verbose_name='Vote', choices=VOTES)
+    score_value = models.SmallIntegerField(verbose_name='Score', choices=SCORES)
 
-    profile = models.ForeignKey(to=Profile, verbose_name='Profile', related_name='vote', on_delete=models.CASCADE)
+    profile = models.ForeignKey(to=Profile, verbose_name='Profile', related_name='score', on_delete=models.CASCADE)
 
     content_type = models.ForeignKey(to=ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    objects = VoteManager()
+    objects = ScoreManager()
 
     class Meta:
         # пользователь не может проголосовать более одного раза за одну сущность (вопрос/ответ):
@@ -119,8 +119,8 @@ class QuestionManager(models.Manager):
     def hot(self):
         return self.annotate_n_answers().order_by('-rating')
 
-    def by_tag(self, tag):
-        return self.annotate_n_answers().filter(tags__name=tag)
+    def by_label(self, label):
+        return self.annotate_n_answers().filter(labels__name=label)
 
     def by_id(self, id):
         return self.annotate_n_answers().get(id=id)
@@ -129,14 +129,20 @@ class QuestionManager(models.Manager):
 class Question(models.Model):
     title = models.CharField(max_length=256, verbose_name='Question title', blank=False)
     text = models.TextField(verbose_name='Question text', blank=False)
-    pub_date = models.DateTimeField(auto_now_add=True, verbose_name='Question publish date')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Question created time')
     rating = models.IntegerField(default=0)
 
     profile = models.ForeignKey(to=Profile, related_name='question', null=True, on_delete=models.SET_NULL)
     labels = models.ManyToManyField(to=Label, related_name='question', blank=True)
-    votes = GenericRelation(to=Vote, related_query_name='question')
+    scores = GenericRelation(to=Score, related_query_name='question')
 
     objects = QuestionManager()
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["rating"])
+        ]
 
     def __str__(self):
         return self.title
@@ -155,7 +161,7 @@ class Answer(models.Model):
 
     profile = models.ForeignKey(to=Profile, related_name='answer', null=True, on_delete=models.SET_NULL)
     question = models.ForeignKey(to=Question, related_name='answer', on_delete=models.CASCADE)
-    votes = GenericRelation(to=Vote, related_query_name='answer')
+    scores = GenericRelation(to=Score, related_query_name='answer')
 
     objects = AnswerManager()
 

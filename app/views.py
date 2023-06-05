@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods, require_POST, req
 
 from django.forms import model_to_dict
 from app.forms import LoginForm, RegistrationForm, SettingsForm, QuestionForm, AnswerForm
-from app.models import Question, Label, Profile, Answer, Vote
+from app.models import Question, Label, Profile, Answer, Score
 
 from django.contrib import auth
 
@@ -24,7 +24,7 @@ def index(request):
         'title': 'Новые вопросы',
         'page_obj': paginate(Question.objects.new(), request, 5),
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Label.objects.top_labels(10),
+        'popular_labels': Label.objects.top_labels(10),
     }
     return render(request, 'index.html', context=context)
 
@@ -35,7 +35,7 @@ def hot_questions(request):
         'title': 'Популярные вопросы',
         'page_obj': paginate(Question.objects.hot(), request, 5),
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Label.objects.top_labels(10),
+        'popular_labels': Label.objects.top_labels(10),
     }
     return render(request, 'index.html', context=context)
 
@@ -44,9 +44,9 @@ def hot_questions(request):
 def questions_by_label(request, label: str):
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Label.objects.top_labels(10),
+        'popular_labels': Label.objects.top_labels(10),
     }
-    questions = Question.objects.by_tag(label)
+    questions = Question.objects.by_label(label)
     if questions.count() == 0:
         return render(request, "not_found.html", context, status=404)
     page_obj = paginate(questions, request, 5)
@@ -61,7 +61,7 @@ def questions_by_label(request, label: str):
 def question(request, q_id: int):
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Label.objects.top_labels(10),
+        'popular_labels': Label.objects.top_labels(10),
     }
 
     try:
@@ -147,7 +147,7 @@ def login(request):
         form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Label.objects.top_labels(10),
+        'popular_labels': Label.objects.top_labels(10),
         'form': form
     }
     return render(request, 'login.html', context=context)
@@ -170,7 +170,7 @@ def signup(request):
         form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Label.objects.top_labels(10),
+        'popular_labels': Label.objects.top_labels(10),
         'form': form,
     }
     return render(request, 'signup.html', context=context)
@@ -192,7 +192,7 @@ def settings(request):
         form = {}
     context = {
         'best_members': Profile.objects.top_users(10),
-        'popular_tags': Label.objects.top_labels(10),
+        'popular_labels': Label.objects.top_labels(10),
         'form': form,
     }
     return render(request, 'settings.html', context=context)
@@ -204,7 +204,7 @@ def logout(request):
     return redirect(request.META.get('HTTP_REFERER'))
 
 
-@require_POST
+@require_http_methods(['POST', 'OPTIONS'])
 def vote(request):
     if not request.user.is_authenticated:
         return JsonResponse({
@@ -217,8 +217,8 @@ def vote(request):
     profile_id = request.user.profile.id
 
     try:
-        rating = Vote.objects.add_vote(vote_value=int(vote_value), profile_id=profile_id, object_id=object_id,
-                                       object_type=int(object_type))
+        rating = Score.objects.add_score(score_value=int(vote_value), profile_id=profile_id, object_id=object_id,
+                                         object_type=int(object_type))
         return JsonResponse({
             "status": "ok",
             "rating": rating,
@@ -229,7 +229,7 @@ def vote(request):
         })
 
 
-@require_POST
+@require_http_methods(['POST', 'OPTIONS'])
 def correct(request):
     if not request.user.is_authenticated:
         return JsonResponse({

@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from app.models import Question, Profile, Vote, Label, Answer
+from app.models import Question, Profile, Score, Label, Answer
 from django.contrib.auth.models import User
 
 
@@ -13,7 +13,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         Question.objects.all().delete()
         Answer.objects.all().delete()
-        Vote.objects.all().delete()
+        Score.objects.all().delete()
         Profile.objects.all().delete()
         User.objects.all().delete()
         Label.objects.all().delete()

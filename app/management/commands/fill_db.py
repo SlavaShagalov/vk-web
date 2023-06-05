@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from app.models import Question, Profile, Label, Answer, Vote
+from app.models import Question, Profile, Label, Answer, Score
 from django.contrib.auth.models import User
 
 from faker import Faker, exceptions
@@ -137,8 +137,8 @@ class Command(BaseCommand):
             question.rating += 1
             question.save()
 
-            q_likes[j] = Vote(vote=1, profile_id=profile_id, content_object=question)
-        Vote.objects.bulk_create(q_likes)
+            q_likes[j] = Score(vote=1, profile_id=profile_id, content_object=question)
+        Score.objects.bulk_create(q_likes)
         print("Success.")
 
         n_q_dislikes = count // 4
@@ -157,8 +157,8 @@ class Command(BaseCommand):
             question.rating -= 1
             question.save()
 
-            q_dislikes[j] = Vote(vote=-1, profile_id=profile_id, content_object=question)
-        Vote.objects.bulk_create(q_dislikes)
+            q_dislikes[j] = Score(vote=-1, profile_id=profile_id, content_object=question)
+        Score.objects.bulk_create(q_dislikes)
         print("Success.")
 
         # --------------------------Answers generating------------------------------
@@ -182,8 +182,8 @@ class Command(BaseCommand):
             answer.rating += 1
             answer.save()
 
-            a_likes[j] = Vote(vote=1, profile_id=profile_id, content_object=answer)
-        Vote.objects.bulk_create(a_likes)
+            a_likes[j] = Score(vote=1, profile_id=profile_id, content_object=answer)
+        Score.objects.bulk_create(a_likes)
         print("Success.")
 
         n_a_dislikes = count - n_a_likes * 3
@@ -202,6 +202,6 @@ class Command(BaseCommand):
             answer.rating -= 1
             answer.save()
 
-            a_dislikes[j] = Vote(vote=-1, profile_id=profile_id, content_object=answer)
-        Vote.objects.bulk_create(a_dislikes)
+            a_dislikes[j] = Score(vote=-1, profile_id=profile_id, content_object=answer)
+        Score.objects.bulk_create(a_dislikes)
         print("Success.")
