@@ -4,8 +4,8 @@
     <div class="popular-labels">
         <h2 class="mt-5">Популярные метки:</h2>
         <div class="container">
-            {% for tag in popular_tags %}
-            <a class="tag" href="{% url 'tag' tag=tag %}">{{ tag }}</a>
+            {% for label in popular_labels %}
+                <a class="tag" href="{% url 'label' label=label %}">{{ label }}</a>
             {% endfor %}
         </div>
     </div>
@@ -14,9 +14,9 @@
         <h2>Лучшие участники:</h2>
         <ul>
             {% for member in best_members %}
-            <li class="mb-1">
-                <a href="">{{ member.user.first_name }} {{ member.user.last_name }}</a>
-            </li>
+                <li class="mb-1">
+                    <a href="">{{ member.user.first_name }} {{ member.user.last_name }}</a>
+                </li>
             {% endfor %}
         </ul>
     </div>

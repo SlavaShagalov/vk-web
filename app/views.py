@@ -7,7 +7,7 @@ from django.views.decorators.http import require_http_methods, require_POST, req
 
 from django.forms import model_to_dict
 from app.forms import LoginForm, RegistrationForm, SettingsForm, QuestionForm, AnswerForm
-from app.models import Question, Label, Profile, Answer, Score
+from app.models import Question, Label, Profile, Answer, QuestionScore, AnswerScore
 
 from django.contrib import auth
 
@@ -205,28 +205,29 @@ def logout(request):
 
 
 @require_http_methods(['POST', 'OPTIONS'])
-def vote(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({
-            "status": "error",
-        })
-
-    object_id = request.POST['object_id']
-    object_type = request.POST['object_type']
-    vote_value = request.POST['vote_value']
-    profile_id = request.user.profile.id
-
-    try:
-        rating = Score.objects.add_score(score_value=int(vote_value), profile_id=profile_id, object_id=object_id,
-                                         object_type=int(object_type))
-        return JsonResponse({
-            "status": "ok",
-            "rating": rating,
-        })
-    except:
-        return JsonResponse({
-            "status": "error",
-        })
+def score(request):
+    pass
+    # if not request.user.is_authenticated:
+    #     return JsonResponse({
+    #         "status": "error",
+    #     })
+    #
+    # object_id = request.POST['object_id']
+    # object_type = request.POST['object_type']
+    # score_value = request.POST['score_value']
+    # profile_id = request.user.profile.id
+    #
+    # try:
+    #     rating = Score.objects.add_score(score_value=int(score_value), profile_id=profile_id, object_id=object_id,
+    #                                      object_type=int(object_type))
+    #     return JsonResponse({
+    #         "status": "ok",
+    #         "rating": rating,
+    #     })
+    # except:
+    #     return JsonResponse({
+    #         "status": "error",
+    #     })
 
 
 @require_http_methods(['POST', 'OPTIONS'])

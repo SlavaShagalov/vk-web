@@ -8,14 +8,14 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('', views.index, name='home'),
     path('hot/', views.hot_questions, name='hot'),
-    path('tag/<str:tag>', views.questions_by_label, name='tag'),
+    path('label/<str:label>', views.questions_by_label, name='label'),
     path('question/<int:q_id>/', views.question, name='question'),
     path('login/', views.login, name='login'),
     path('signup/', views.signup, name='signup'),
     path('ask/', views.ask, name='ask'),
     path('profile/edit/', views.settings, name='settings'),
     path('logout/', views.logout, name='logout'),
-    path('vote/', views.vote, name='vote'),
+    path('score/', views.score, name='score'),
     path('correct/', views.correct, name='correct'),
 ]
 

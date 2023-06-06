@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from app.models import Question, Profile, Label, Answer, Score
+from app.models import Question, Profile, Label, Answer, QuestionScore, AnswerScore
 from django.contrib.auth.models import User
 
 from faker import Faker
@@ -139,8 +139,8 @@ class Command(BaseCommand):
             question.rating += 1
             question.save()
 
-            q_likes[j] = Score(score_value=1, profile_id=profile_id, content_object=question)
-        Score.objects.bulk_create(q_likes)
+            q_likes[j] = QuestionScore(value=1, profile_id=profile_id, question_id=question_id)
+        QuestionScore.objects.bulk_create(q_likes)
         print("Success.")
 
         n_q_dislikes = count // 4
@@ -159,8 +159,8 @@ class Command(BaseCommand):
             question.rating -= 1
             question.save()
 
-            q_dislikes[j] = Score(score_value=-1, profile_id=profile_id, content_object=question)
-        Score.objects.bulk_create(q_dislikes)
+            q_dislikes[j] = QuestionScore(value=-1, profile_id=profile_id, question_id=question_id)
+        QuestionScore.objects.bulk_create(q_dislikes)
         print("Success.")
 
         # --------------------------Answers generating------------------------------
@@ -184,8 +184,8 @@ class Command(BaseCommand):
             answer.rating += 1
             answer.save()
 
-            a_likes[j] = Score(score_value=1, profile_id=profile_id, content_object=answer)
-        Score.objects.bulk_create(a_likes)
+            a_likes[j] = AnswerScore(value=1, profile_id=profile_id, answer_id=answer_id)
+        AnswerScore.objects.bulk_create(a_likes)
         print("Success.")
 
         n_a_dislikes = count - n_a_likes * 3
@@ -204,6 +204,6 @@ class Command(BaseCommand):
             answer.rating -= 1
             answer.save()
 
-            a_dislikes[j] = Score(score_value=-1, profile_id=profile_id, content_object=answer)
-        Score.objects.bulk_create(a_dislikes)
+            a_dislikes[j] = AnswerScore(value=-1, profile_id=profile_id, answer_id=answer_id)
+        AnswerScore.objects.bulk_create(a_dislikes)
         print("Success.")

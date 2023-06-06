@@ -1,15 +1,15 @@
 const server_address = 'http://127.0.0.1:8000';
 
-function vote(object_id, object_type, vote_value) {
+function score(object_id, object_type, score_value) {
     const request = new Request(
-        server_address + '/vote/',
+        server_address + '/score/',
         {
             method: 'POST',
             headers: {
                 'X-CSRFToken': csrftoken,
                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
             },
-            body: 'object_id=' + object_id + '&object_type=' + object_type + '&vote_value=' + vote_value
+            body: 'object_id=' + object_id + '&object_type=' + object_type + '&score_value=' + score_value
         }
     );
 
@@ -33,20 +33,20 @@ function vote(object_id, object_type, vote_value) {
     );
 }
 
-$(".question-vote-up").on('click', function (ev) {
-    vote($(this).data('id'), 0, 1);
+$(".question-score-up").on('click', function (ev) {
+    score($(this).data('id'), 0, 1);
 })
 
-$(".question-vote-down").on('click', function (ev) {
-    vote($(this).data('id'), 0, -1);
+$(".question-score-down").on('click', function (ev) {
+    score($(this).data('id'), 0, -1);
 })
 
-$(".answer-vote-up").on('click', function (ev) {
-    vote($(this).data('id'), 1, 1);
+$(".answer-score-up").on('click', function (ev) {
+    score($(this).data('id'), 1, 1);
 })
 
-$(".answer-vote-down").on('click', function (ev) {
-    vote($(this).data('id'), 1, -1);
+$(".answer-score-down").on('click', function (ev) {
+    score($(this).data('id'), 1, -1);
 })
 
 // correct answer handle

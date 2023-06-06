@@ -71,11 +71,11 @@ div.auth {
     margin-right: 20px;
 }
 
-.question-tags p {
+.question-labels p {
     display: inline;
 }
 
-div.question-tags {
+div.question-labels {
     display: inline;
 }
 
@@ -111,7 +111,7 @@ div.question-tags {
     margin-left: 20px;
 }
 
-.popular-tags a {
+.popular-labels a {
     margin-right: 15px;
 }
 

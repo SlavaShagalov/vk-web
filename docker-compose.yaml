@@ -1,24 +1,24 @@
-version: '3.7'
+version: '3.9'
 
 services:
   postgres:
-    image: postgres:14.5-alpine
-    container_name: askme_db
+    image: postgres
+    container_name: qa_postgres
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=askme
-      - POSTGRES_USER=test_user
-      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=qa_db
+      - POSTGRES_USER=qa_user
+      - POSTGRES_PASSWORD=qa_pswd
 
-  nginx:
-    image: nginx:1.23.3
-    container_name: askme_nginx
-    volumes:
-      - ./askme.conf:/etc/nginx/conf.d/askme.conf
-      - ./static:/static
-      - ./uploads:/uploads
-#    ports:
-#      - "80:80"
-#      - "443:443"
-    network_mode: host
+#  nginx:
+#    image: nginx:1.23.3
+#    container_name: qa_nginx
+#    volumes:
+#      - ./askme.conf:/etc/nginx/conf.d/askme.conf
+#      - ./static:/static
+#      - ./uploads:/uploads
+##    ports:
+##      - "80:80"
+##      - "443:443"
+#    network_mode: host

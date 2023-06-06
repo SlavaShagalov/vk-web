@@ -24,11 +24,11 @@
                      class="d-inline-block align-text-center">
                 Вопросы и Ответы
             </a>
-            <form class="d-flex me-auto" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-search" type="submit">Поиск</button>
-            </form>
-            <a class="btn btn-ask" href="{% url 'ask' %}" type="submit">Задать вопрос!</a>
+{#            <form class="d-flex me-auto" role="search">#}
+{#                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">#}
+{#                <button class="btn btn-search" type="submit">Поиск</button>#}
+{#            </form>#}
+            <a class="btn btn-ask d-flex me-auto" href="{% url 'ask' %}" type="submit">Задать вопрос!</a>
             <div class="auth">
                 {% if user.is_authenticated %}
                     <div class="auth-avatar">
