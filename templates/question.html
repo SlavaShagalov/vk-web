@@ -12,13 +12,13 @@
             </div>
             <div class="question-rating">
                 <div class="question-rating-btn">
-                    <button class="question-vote-up btn" data-id="{{ question.id }}" type="button">
+                    <button class="question-score-up btn" data-id="{{ question.id }}" type="button">
                         <img src="{% static '/img/caret-up-fill.svg' %}" alt="Up">
                     </button>
                 </div>
                 <p id="question-rating-{{ question.id }}">{{ question.rating }}</p>
                 <div class="question-rating-btn">
-                    <button class="question-vote-down btn" data-id="{{ question.id }}" type="button">
+                    <button class="question-score-down btn" data-id="{{ question.id }}" type="button">
                         <img src="{% static '/img/caret-down-fill.svg' %}" alt="Down">
                     </button>
                 </div>
@@ -46,13 +46,13 @@
                     </div>
                     <div class="question-rating">
                         <div class="question-rating-btn">
-                            <button class="answer-vote-up btn" data-id="{{ answer.id }}" type="button">
+                            <button class="answer-score-up btn" data-id="{{ answer.id }}" type="button">
                                 <img src="{% static '/img/caret-up-fill.svg' %}" alt="Up">
                             </button>
                         </div>
                         <p id="answer-rating-{{ answer.id }}">{{ answer.rating }}</p>
                         <div class="question-rating-btn">
-                            <button class="answer-vote-down btn" data-id="{{ answer.id }}" type="button">
+                            <button class="answer-score-down btn" data-id="{{ answer.id }}" type="button">
                                 <img src="{% static '/img/caret-down-fill.svg' %}" alt="Down">
                             </button>
                         </div>

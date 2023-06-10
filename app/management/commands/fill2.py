@@ -135,10 +135,6 @@ class Command(BaseCommand):
                 question_id = random.randint(que_min_id, que_max_id)
             used_pairs.append((profile_id, question_id))
 
-            question = Question.objects.get(id=question_id)
-            question.rating += 1
-            question.save()
-
             q_likes[j] = QuestionScore(value=1, profile_id=profile_id, question_id=question_id)
         QuestionScore.objects.bulk_create(q_likes)
         print("Success.")
@@ -154,10 +150,6 @@ class Command(BaseCommand):
                 profile_id = random.randint(prof_min_id, prof_max_id)
                 question_id = random.randint(que_min_id, que_max_id)
             used_pairs.append((profile_id, question_id))
-
-            question = Question.objects.get(id=question_id)
-            question.rating -= 1
-            question.save()
 
             q_dislikes[j] = QuestionScore(value=-1, profile_id=profile_id, question_id=question_id)
         QuestionScore.objects.bulk_create(q_dislikes)
@@ -180,10 +172,6 @@ class Command(BaseCommand):
                 answer_id = random.randint(ans_min_id, ans_max_id)
             used_pairs.append((profile_id, answer_id))
 
-            answer = Answer.objects.get(id=answer_id)
-            answer.rating += 1
-            answer.save()
-
             a_likes[j] = AnswerScore(value=1, profile_id=profile_id, answer_id=answer_id)
         AnswerScore.objects.bulk_create(a_likes)
         print("Success.")
@@ -199,10 +187,6 @@ class Command(BaseCommand):
                 profile_id = random.randint(prof_min_id, prof_max_id)
                 answer_id = random.randint(ans_min_id, ans_max_id)
             used_pairs.append((profile_id, answer_id))
-
-            answer = Answer.objects.get(id=answer_id)
-            answer.rating -= 1
-            answer.save()
 
             a_dislikes[j] = AnswerScore(value=-1, profile_id=profile_id, answer_id=answer_id)
         AnswerScore.objects.bulk_create(a_dislikes)

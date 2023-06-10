@@ -206,28 +206,32 @@ def logout(request):
 
 @require_http_methods(['POST', 'OPTIONS'])
 def score(request):
-    pass
-    # if not request.user.is_authenticated:
-    #     return JsonResponse({
-    #         "status": "error",
-    #     })
-    #
-    # object_id = request.POST['object_id']
-    # object_type = request.POST['object_type']
-    # score_value = request.POST['score_value']
-    # profile_id = request.user.profile.id
-    #
-    # try:
-    #     rating = Score.objects.add_score(score_value=int(score_value), profile_id=profile_id, object_id=object_id,
-    #                                      object_type=int(object_type))
-    #     return JsonResponse({
-    #         "status": "ok",
-    #         "rating": rating,
-    #     })
-    # except:
-    #     return JsonResponse({
-    #         "status": "error",
-    #     })
+    if not request.user.is_authenticated:
+        return JsonResponse({
+            "status": "error",
+        })
+
+    object_id = request.POST['object_id']
+    object_type = request.POST['object_type']
+    value = request.POST['value']
+    profile_id = request.user.profile.id
+
+    print(f"SCORE: profile_id={profile_id}, object_id={object_id}, object_type={object_type}, value={value}")
+    try:
+        rating = 0
+        if int(object_type) == 0:
+            rating = QuestionScore.objects.add_score(value=int(value), profile_id=profile_id,
+                                                     question_id=int(object_id))
+        elif int(object_type) == 1:
+            rating = AnswerScore.objects.add_score(value=int(value), profile_id=profile_id, answer_id=int(object_id))
+        return JsonResponse({
+            "status": "ok",
+            "rating": rating,
+        })
+    except:
+        return JsonResponse({
+            "status": "error",
+        })
 
 
 @require_http_methods(['POST', 'OPTIONS'])

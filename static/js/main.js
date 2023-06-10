@@ -1,6 +1,6 @@
 const server_address = 'http://127.0.0.1:8000';
 
-function score(object_id, object_type, score_value) {
+function score(object_id, object_type, value) {
     const request = new Request(
         server_address + '/score/',
         {
@@ -9,7 +9,7 @@ function score(object_id, object_type, score_value) {
                 'X-CSRFToken': csrftoken,
                 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
             },
-            body: 'object_id=' + object_id + '&object_type=' + object_type + '&score_value=' + score_value
+            body: 'object_id=' + object_id + '&object_type=' + object_type + '&value=' + value
         }
     );
 

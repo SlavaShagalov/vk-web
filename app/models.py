@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Count, Sum
-from django.db.models.functions import Coalesce
+from django.db.models import Count
 
 
 class ProfileManager(models.Manager):
@@ -38,12 +37,8 @@ class Label(models.Model):
 
 
 class QuestionManager(models.Manager):
-    # def annotate_n_answers(self):
-    #     return self.annotate(n_answers=Count('answer', distinct=True))
-
     def annotate_n_answers(self):
-        return self.annotate(n_answers=Count('answer', distinct=True),
-                             rating=Coalesce(Sum('questionscore__value', distinct=True), 0))
+        return self.annotate(n_answers=Count('answer', distinct=True))
 
     def new(self):
         return self.annotate_n_answers().order_by('-created_at')
@@ -62,18 +57,12 @@ class Question(models.Model):
     title = models.CharField(max_length=256, verbose_name='Question title', blank=False)
     text = models.TextField(verbose_name='Question text', blank=False)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Question created time')
-    # rating = models.IntegerField(default=0)
+    rating = models.IntegerField(default=0)
 
     profile = models.ForeignKey(to=Profile, related_name='question', null=True, on_delete=models.SET_NULL)
     labels = models.ManyToManyField(to=Label, related_name='question', blank=True)
 
     objects = QuestionManager()
-
-    # class Meta:
-    #     indexes = [
-    #         models.Index(fields=["created_at"]),
-    #         models.Index(fields=["rating"])
-    #     ]
 
     def __str__(self):
         return self.title
@@ -95,13 +84,31 @@ class Answer(models.Model):
 
     objects = AnswerManager()
 
-    # class Meta:
-    #     indexes = [
-    #         models.Index(fields=["created_at"]),
-    #     ]
-
     def __str__(self):
         return self.text
+
+
+class QuestionScoreManager(models.Manager):
+    def add_score(self, value, profile_id, question_id):
+        try:
+            score = self.get(profile_id=profile_id, question_id=question_id)
+        except QuestionScore.DoesNotExist:
+            score = None
+
+        # если пользователь хочет сделать, например, дизлайк вместо лайка, нужно нажать два раза на дизлайк
+        # - первый, чтоб отменить лайк, второй, чтобы поставить дизлайк
+        if not score:
+            print(f"QUESTION_SCORE_CREATE: profile_id={profile_id}, question_id={question_id}, value={value}")
+            self.create(value=value, profile_id=profile_id, question_id=question_id)
+        elif score.value == value:
+            print(f"QUESTION_SCORE_ALREADY_EXISTS: profile_id={profile_id}, question_id={question_id}, value={value}")
+            raise Exception
+        else:
+            print(f"QUESTION_SCORE_DELETE: profile_id={profile_id}, question_id={question_id}")
+            score.delete()  # отмена лайка
+
+        question = Question.objects.get(id=question_id)
+        return question.rating
 
 
 class QuestionScore(models.Model):
@@ -112,12 +119,37 @@ class QuestionScore(models.Model):
 
     value = models.SmallIntegerField(verbose_name='Value', choices=SCORES)
 
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(to=Question, related_name='questionscore', on_delete=models.CASCADE)
     profile = models.ForeignKey(to=Profile, verbose_name='Profile', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = QuestionScoreManager()
+
     class Meta:
         unique_together = ('profile', 'question')
+
+
+class AnswerScoreManager(models.Manager):
+    def add_score(self, value, profile_id, answer_id):
+        try:
+            score = self.get(profile_id=profile_id, answer_id=answer_id)
+        except AnswerScore.DoesNotExist:
+            score = None
+
+        # если пользователь хочет сделать, например, дизлайк вместо лайка, нужно нажать два раза на дизлайк
+        # - первый, чтоб отменить лайк, второй, чтобы поставить дизлайк
+        if not score:
+            print(f"ANSWER_SCORE_CREATE: profile_id={profile_id}, answer_id={answer_id}, value={value}")
+            self.create(value=value, profile_id=profile_id, answer_id=answer_id)
+        elif score.value == value:
+            print(f"ANSWER_SCORE_ALREADY_EXISTS: profile_id={profile_id}, answer_id={answer_id}, value={value}")
+            raise Exception
+        else:
+            print(f"ANSWER_SCORE_DELETE: profile_id={profile_id}, answer_id={answer_id}")
+            score.delete()  # отмена лайка
+
+        answer = Answer.objects.get(id=answer_id)
+        return answer.rating
 
 
 class AnswerScore(models.Model):
@@ -131,6 +163,8 @@ class AnswerScore(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)
     profile = models.ForeignKey(to=Profile, verbose_name='Profile', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = AnswerScoreManager()
 
     class Meta:
         unique_together = ('profile', 'answer')
