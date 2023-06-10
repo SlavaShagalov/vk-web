@@ -132,4 +132,4 @@ dmypy.json
 venv
 *.pyc
 .idea
-*.sql
+*_dump.sql
