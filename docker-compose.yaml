@@ -8,8 +8,8 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_DB=qa_db
-      - POSTGRES_USER=qa_user
-      - POSTGRES_PASSWORD=qa_pswd
+      - POSTGRES_USER=qa_admin
+      - POSTGRES_PASSWORD=qa_admin_pswd
 
 #  nginx:
 #    image: nginx:1.23.3

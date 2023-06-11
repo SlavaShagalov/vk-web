@@ -52,7 +52,6 @@ class RegistrationForm(forms.ModelForm):
 
     def save(self, **kwargs):
         avatar = None
-        # print(self.cleaned_data['avatar'])
         if 'avatar' in self.cleaned_data.keys():
             avatar = self.cleaned_data['avatar']
 
@@ -110,8 +109,8 @@ class SettingsForm(forms.ModelForm):
 
 
 class QuestionForm(forms.ModelForm):
-    tags = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "django postgres"}), label='Tags:',
-                           required=False)
+    labels = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "django postgres"}), label='Метки:',
+                             required=False)
 
     class Meta:
         model = Question
@@ -127,12 +126,12 @@ class QuestionForm(forms.ModelForm):
             'text': forms.Textarea(attrs={"placeholder": "I got an error..."}),
         }
 
-    def clean_tags(self):
+    def clean_labels(self):
         data = self.cleaned_data['labels']
-        tag_list = data.split()
-        for tag in tag_list:
-            if len(tag) > 32:
-                self.add_error('labels', 'Max length of tag is 32 characters')
+        label_list = data.split()
+        for label in label_list:
+            if len(label) > 32:
+                self.add_error('labels', 'Max length of label is 32 characters')
         return data
 
     def save(self, profile):
@@ -140,9 +139,9 @@ class QuestionForm(forms.ModelForm):
         question.profile = profile
         question.save()
         data = self.cleaned_data['labels']
-        tag_list = data.split()
-        for tag in tag_list:
-            question.labels.add(Label.objects.get_or_create(name=tag)[0].id)
+        label_list = data.split()
+        for label in label_list:
+            question.labels.add(Label.objects.get_or_create(name=label)[0].id)
         question.save()
 
         return question

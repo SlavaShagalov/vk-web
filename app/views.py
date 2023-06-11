@@ -228,7 +228,8 @@ def score(request):
             "status": "ok",
             "rating": rating,
         })
-    except:
+    except Exception as e:
+        print(f"ERROR: exception={e}")
         return JsonResponse({
             "status": "error",
         })

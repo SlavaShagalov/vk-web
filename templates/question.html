@@ -27,10 +27,10 @@
         <div class="col-10">
             <h2 class="question-title">{{ question.title }}</h2>
             <p class="question-text">{{ question.text }}</p>
-            <div class="question-tags">
-                Tags:
-                {% for tag in question.tags.all %}
-                    <a href="{% url 'tag' tag=tag %}">{{ tag }}</a>
+            <div class="question-labels">
+                Метки:
+                {% for label in question.labels.all %}
+                    <a href="{% url 'label' label=label %}">{{ label }}</a>
                 {% endfor %}
             </div>
         </div>

@@ -6,7 +6,7 @@ from django.db.models import Count
 
 class ProfileManager(models.Manager):
     def top_users(self, count=5):
-        return self.annotate(n_answers=Count('answer')).order_by('-n_answers')[:count]
+        return self.using('guest').annotate(n_answers=Count('answer')).order_by('-n_answers')[:count]
 
 
 class Profile(models.Model):
@@ -24,7 +24,7 @@ class Profile(models.Model):
 
 class LabelManager(models.Manager):
     def top_labels(self, count=10):
-        return self.annotate(n_questions=Count('question')).order_by('-n_questions')[:count]
+        return self.using('guest').annotate(n_questions=Count('question')).order_by('-n_questions')[:count]
 
 
 class Label(models.Model):
@@ -70,7 +70,7 @@ class Question(models.Model):
 
 class AnswerManager(models.Manager):
     def by_question(self, question_id):
-        return self.filter(question_id=question_id).order_by('created_at')
+        return self.using('guest').filter(question_id=question_id).order_by('created_at')
 
 
 class Answer(models.Model):

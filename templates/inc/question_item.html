@@ -27,12 +27,12 @@
             {{ question.text }}
         </p>
         <a class="question-answer" href="{% url 'question' q_id=question.id %}">
-            answers ({{ question.n_answers }})
+            ответы ({{ question.n_answers }})
         </a>
-        <div class="question-tags">
-            <p>Tags:</p>
-            {% for tag in question.tags.all %}
-                <a href="{% url 'tag' tag=tag %}">{{ tag }}</a>
+        <div class="question-labels">
+            <p>Метки:</p>
+            {% for label in question.labels.all %}
+                <a href="{% url 'label' label=label %}">{{ label }}</a>
             {% endfor %}
         </div>
     </div>
