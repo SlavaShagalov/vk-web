@@ -63,7 +63,7 @@
                     <div class="form-check">
                         {% if request.user.profile == question.profile %}
                             <label for="answer-correct-{{ answer.id }}">
-                                Correct
+                                Правильный
                                 <input id="answer-correct-{{ answer.id }}" class="form-check-input" type="checkbox"
                                        data-qid="{{ question.id }}" data-aid="{{ answer.id }}"
                                         {% if answer.correct %} checked="checked" {% endif %}>
@@ -71,7 +71,7 @@
                         {% else %}
                             {% if answer.correct %}
                                 <label class="form-check-label">
-                                    Correct
+                                    Правильный
                                     <input class="form-check-input" type="checkbox" disabled checked>
                                 </label>
                             {% endif %}
@@ -89,7 +89,7 @@
         <form action="/question/{{ question.id }}/" method="post" class="form" novalidate>
             {% csrf_token %}
             {% bootstrap_form form %}
-            <button type="submit" class="btn btn-ask col-2">Answer</button>
+            <button type="submit" class="btn btn-ask col-2">Ответить</button>
         </form>
     </div>
 

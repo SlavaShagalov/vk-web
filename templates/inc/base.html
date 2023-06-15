@@ -36,7 +36,7 @@
                     </div>
                     <div class="auth-links">
                         <div class="auth-username">
-                            <a href="#">{{ user.first_name }} {{ user.last_name }}</a>
+                            <a href="{% url 'settings' %}">{{ user.first_name }} {{ user.last_name }}</a>
                         </div>
                         <div class="auth-options">
                             <a class="col" href="{% url 'settings' %}">Настройки</a>
